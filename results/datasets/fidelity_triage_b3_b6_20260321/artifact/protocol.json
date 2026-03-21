@@ -1,0 +1,30 @@
+{
+  "protocol_version": "v0.2-prime-measure",
+  "main_matrix": {
+    "workloads": [
+      "W1_text_math",
+      "W2_cjk_font",
+      "W4_tikz",
+      "W5_minted"
+    ],
+    "scenarios": [
+      "S0_clean_build",
+      "S1_text_edit",
+      "S2_bib_edit",
+      "S3_figure_edit",
+      "S4_preamble_edit"
+    ],
+    "configs": [
+      "B0_baseline_xelatex",
+      "B1_latexmk",
+      "B3_latexmk_tikz_externalize",
+      "B4_minted_cache",
+      "B6_tectonic"
+    ]
+  },
+  "appendix_configs": [
+    "B2_latexmk_mylatexformat",
+    "B7_windows_storage_mode"
+  ],
+  "generated_at_utc": "2026-03-20T17:35:45.8684529+00:00"
+}

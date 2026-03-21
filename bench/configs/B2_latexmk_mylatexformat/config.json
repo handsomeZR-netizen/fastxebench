@@ -1,0 +1,20 @@
+{
+  "id": "B2_latexmk_mylatexformat",
+  "label": "XeLaTeX with mylatexformat cache",
+  "build_strategy": "mylatexformat_xelatex",
+  "requires": [
+    "xelatex",
+    "xetex",
+    "kpsewhich"
+  ],
+  "main_matrix": false,
+  "development_only": false,
+  "strong_fidelity_expected": false,
+  "applicable_workloads": [
+    "W1_text_math",
+    "W2_cjk_font",
+    "W4_tikz",
+    "W5_minted"
+  ],
+  "description": "Appendix-only negative/compatibility result for XeLaTeX precompiled format caching."
+}

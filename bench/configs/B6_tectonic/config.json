@@ -1,0 +1,17 @@
+{
+  "id": "B6_tectonic",
+  "label": "Tectonic cached build",
+  "build_strategy": "tectonic",
+  "requires": [
+    "tectonic"
+  ],
+  "main_matrix": false,
+  "development_only": true,
+  "strong_fidelity_expected": false,
+  "applicable_workloads": [
+    "W1_text_math",
+    "W2_cjk_font",
+    "W4_tikz"
+  ],
+  "description": "Development-only engine comparison excluded from the formal core matrix after fidelity triage."
+}

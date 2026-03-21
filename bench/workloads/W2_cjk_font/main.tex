@@ -1,0 +1,69 @@
+\documentclass[UTF8]{ctexart}
+
+\newif\ifBenchTikzExternalize
+\BenchTikzExternalizefalse
+\InputIfFileExists{bench-config.tex}{}{}
+
+\newcommand{\benchtexttoken}{ALPHA}
+\newcommand{\benchfiguretoken}{1.00}
+\newcommand{\benchpreambletoken}{P0}
+
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{tikz}
+
+\title{W2 CJK Font Workload}
+\author{FastXeBench}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{背景}
+这个工作负载用于模拟 XeLaTeX 在中英文混排场景下的编辑体验。当前标记词为 \benchtexttoken，用于触发正文级别的小修改，并带有一个基础引用路径 \cite{refalpha}。
+
+\section{公式与引用}
+我们使用一个简单的目标函数
+\begin{equation}
+\label{eq:cjk-loss}
+\mathcal{L}(x) = \sum_{k=1}^{m} \left(x_k - \mu_k\right)^2 .
+\end{equation}
+公式~\eqref{eq:cjk-loss} 与后面的图表一起，构成中文论文中常见的最小样式组合。
+
+\section{图形}
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[scale=\benchfiguretoken]
+  \draw[->] (0,0) -- (4.2,0) node[right] {时间};
+  \draw[->] (0,0) -- (0,2.8) node[above] {延迟};
+  \filldraw[fill=black!15] (0.4,0.4) rectangle (1.1,1.8);
+  \filldraw[fill=black!35] (1.5,0.4) rectangle (2.2,2.2);
+  \filldraw[fill=black!55] (2.6,0.4) rectangle (3.3,1.4);
+  \node[below] at (0.75,0.4) {正文};
+  \node[below] at (1.85,0.4) {图形};
+  \node[below] at (2.95,0.4) {缓存};
+\end{tikzpicture}
+\caption{一个带中文标签的简单柱状图。}
+\label{fig:cjk-bars}
+\end{figure}
+
+如图~\ref{fig:cjk-bars} 所示，中英文混排、数学环境和矢量图可以在同一个最小工作负载中同时出现。
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lr@{}}
+\toprule
+场景 & 时间（秒） \\
+\midrule
+冷启动 & 6.1 \\
+稳态编译 & 2.0 \\
+\bottomrule
+\end{tabular}
+\caption{示意性的中文表格。}
+\end{table}
+
+\bibliographystyle{plain}
+\bibliography{refs}
+
+\end{document}

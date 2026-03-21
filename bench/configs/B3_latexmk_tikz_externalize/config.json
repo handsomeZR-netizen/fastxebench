@@ -1,0 +1,15 @@
+{
+  "id": "B3_latexmk_tikz_externalize",
+  "label": "latexmk plus TikZ externalization",
+  "build_strategy": "latexmk_tikz_externalize",
+  "requires": [
+    "latexmk"
+  ],
+  "main_matrix": false,
+  "development_only": false,
+  "strong_fidelity_expected": false,
+  "applicable_workloads": [
+    "W4_tikz"
+  ],
+  "description": "Appendix-only TikZ externalization result after fidelity triage showed persistent visual diffs."
+}

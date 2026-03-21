@@ -1,0 +1,54 @@
+Collected at: 2026-03-20T17:50:42.9440886+00:00
+Repo root: <repo-root>
+Python: python.exe
+OS: Microsoft Windows 11 家庭中文版 10.0.26100 build 26100
+Power plan: 电源方案 GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (平衡)
+
+[xelatex] available=True
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex)
+ restricted \write18 enabled.
+entering extended mode
+! I can't find file `-'.
+
+[xetex] available=True
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xetex)
+ restricted \write18 enabled.
+entering extended mode
+! I can't find file `-'.
+
+[latexmk] available=True
+Initial Win CP for (console input, console output, system): (CP936, CP65001, CP936)
+I changed them all to CP936
+Latexmk: - unknown option
+Reverting Windows console CPs to (in,out) = (936,65001)
+
+[bibtex] available=True
+bibtex: Need exactly one file argument.
+Try `bibtex --help' for more information.
+
+[kpsewhich] available=True
+d:/TexLive/texlive/2025/texmf-dist/tex/latex/tools/e.tex
+
+[latexminted] available=True
+usage: latexminted [-h] [--version]
+                   {batch,clean,cleanconfig,cleantemp,config,highlight,styledef} ...
+latexminted: error: argument subparser_name: invalid choice: '-' (choose from batch, clean, cleanconfig, cleantemp, config, highlight, styledef)
+D:\TexLive\texlive\2025\bin\windows\runscript.tlu:933: command failed with exit code 2:
+
+[pdftoppm] available=True
+Syntax Error: Document stream is empty
+
+[tectonic] available=True
+error: Found argument '-' which wasn't expected, or isn't valid in this context
+System.Management.Automation.RemoteException
+USAGE:
+    tectonic.exe [FLAGS] [OPTIONS] <input>
+
+[hyperfine] available=True
+Benchmark 1: -
+Error: Command terminated with non-zero exit code 1 in the first benchmark run. Use the '-i'/'--ignore-failure' option if you want to ignore this. Alternatively, use the '--show-output' option to debug what went wrong.
+
+[conda] available=True
+usage: conda-script.py [-h] [-v] [--no-plugins] [-V] COMMAND ...
+conda-script.py: error: argument COMMAND: invalid choice: '-' (choose from activate, check, clean, commands, compare, config, content-trust, create, deactivate, doctor, env, export, info, init, install, list, menuinst, notices, package, remove, rename, repoquery, run, search, token, tos, uninstall, update, upgrade)
+

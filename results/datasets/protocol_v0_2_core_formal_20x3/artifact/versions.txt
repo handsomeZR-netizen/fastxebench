@@ -1,0 +1,67 @@
+Collected at: 2026-03-21T06:37:10.2045508+00:00
+Repo root: <repo-root>
+Python: python.exe
+OS: Microsoft Windows 11 家庭中文版 10.0.26100 build 26100
+CPU: 12th Gen Intel(R) Core(TM) i7-12700H (14C/20T)
+Memory (bytes): 16788910080
+Power plan: 电源方案 GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (平衡)
+
+[xelatex] available=True
+XeTeX 3.141592653-2.6-0.999997 (TeX Live 2025)
+kpathsea version 6.4.1
+Copyright 2025 SIL International, Jonathan Kew and Khaled Hosny.
+There is NO warranty.  Redistribution of this software is
+covered by the terms of both the XeTeX copyright and
+the Lesser GNU General Public License.
+
+[xetex] available=True
+XeTeX 3.141592653-2.6-0.999997 (TeX Live 2025)
+kpathsea version 6.4.1
+Copyright 2025 SIL International, Jonathan Kew and Khaled Hosny.
+There is NO warranty.  Redistribution of this software is
+covered by the terms of both the XeTeX copyright and
+the Lesser GNU General Public License.
+
+[latexmk] available=True
+Initial Win CP for (console input, console output, system): (CP936, CP65001, CP936)
+I changed them all to CP936
+Latexmk, John Collins, 15 June 2025. Version 4.87
+Reverting Windows console CPs to (in,out) = (936,65001)
+
+[bibtex] available=True
+BibTeX 0.99d (TeX Live 2025)
+kpathsea version 6.4.1
+Copyright 2025 Oren Patashnik.
+There is NO warranty.  Redistribution of this software is
+covered by the terms of both the BibTeX copyright and
+the Lesser GNU General Public License.
+
+[kpsewhich] available=True
+kpathsea version 6.4.1
+Copyright 2023 Karl Berry & Olaf Weber.
+License LGPLv2.1+: GNU Lesser GPL version 2.1 or later <https://gnu.org/licenses/lgpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+[latexminted] available=True
+latexminted 0.6.0
+Python executable for the LaTeX minted package
+Libraries: latex2pydata 0.5.0, latexrestricted 0.6.2, pygments 2.19.1
+Repository: https://github.com/gpoore/minted
+CTAN: https://ctan.org/pkg/minted
+PyPI: https://pypi.org/project/latexminted
+
+[pdftoppm] available=True
+pdftoppm version 25.02.0
+Copyright 2005-2025 The Poppler Developers - http://poppler.freedesktop.org
+Copyright 1996-2011 Glyph & Cog, LLC
+
+[tectonic] available=True
+tectonic 0.15.0Tectonic 0.15.0
+
+[hyperfine] available=True
+hyperfine 1.20.0
+
+[conda] available=True
+conda 26.1.1
+

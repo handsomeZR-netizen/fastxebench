@@ -1,0 +1,25 @@
+\begin{table}[t]
+\centering
+\caption{Experimental setup for the formal core dataset.}
+\label{tab:setup}
+\small
+\begin{tabular}{p{0.28\linewidth}p{0.66\linewidth}}
+\toprule
+Item & Value \\
+\midrule
+Host CPU & 12th Gen Intel(R) Core(TM) i7-12700H (14 cores / 20 threads) \\
+Memory & 15.6 GiB physical RAM \\
+OS & Microsoft Windows 11 Home (Chinese edition), version 10.0.26100 (build 26100) \\
+Machine & ASUS TUF Gaming F15 FX507ZV4\_FX507ZV4 \\
+Power plan & Balanced \\
+Repository volume & D: NTFS fixed volume; Defender performance mode status 0 \\
+Primary TeX engine & XeTeX 3.141592653-2.6-0.999997 (TeX Live 2025) \\
+Automation & Latexmk, John Collins, 15 June 2025. Version 4.87; hyperfine 1.20.0 \\
+Follow-up engine & tectonic 0.15.0 \\
+PDF comparison & pdftoppm version 25.02.0 at 144 dpi plus per-page PNG SHA-256 \\
+Font path & \texttt{ctexart} on the local Windows CJK path; R1 validation uses TeX Gyre Pagella, Heros, and Cursor. \\
+Formal protocol & \texttt{v0.2-prime-measure}; 4 workloads, 5 scenarios, 3 main configurations \\
+Runs per group & 3 warmups and 20 recorded runs for the formal core matrix \\
+\bottomrule
+\end{tabular}
+\end{table}

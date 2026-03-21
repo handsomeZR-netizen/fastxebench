@@ -1,0 +1,20 @@
+{
+  "id": "B0_baseline_xelatex",
+  "label": "Baseline XeLaTeX",
+  "build_strategy": "baseline_xelatex",
+  "requires": [
+    "xelatex"
+  ],
+  "main_matrix": true,
+  "development_only": false,
+  "strong_fidelity_expected": true,
+  "applicable_workloads": [
+    "W1_text_math",
+    "W2_cjk_font",
+    "W4_tikz",
+    "W5_minted",
+    "R1_fontspec_example",
+    "R2_pgfplots_example"
+  ],
+  "description": "Direct XeLaTeX baseline used for both clean and prime+measure scenarios."
+}

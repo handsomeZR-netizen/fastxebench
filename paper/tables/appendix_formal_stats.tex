@@ -1,0 +1,39 @@
+\begin{table}[p]
+\centering
+\caption{Appendix statistics for the non-baseline main-matrix configurations. IQR is reported as $[Q_1, Q_3]$, CI is the 95\% bootstrap interval for the group median, and Holm-adjusted $p$ values come from two-sided Wilcoxon signed-rank tests that pair runs by within-group recorded order after sorting by \texttt{run\_id}.}
+\label{tab:appendix-stats}
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lllrrrrr}
+\toprule
+Workload & Scenario & Config & Median (s) & IQR (s) & 95\% CI (s) & Speedup & Holm $p$ \\
+\midrule
+W1 Text+Math & S0 clean & B1 latexmk & 8.02 & [8.01, 8.02] & [8.01, 8.02] & 0.88 & <0.001 \\
+W1 Text+Math & S1 text & B1 latexmk & 4.02 & [4.01, 4.02] & [4.01, 4.02] & 1.76 & <0.001 \\
+W1 Text+Math & S2 bib & B1 latexmk & 8.02 & [8.01, 8.02] & [8.01, 8.02] & 0.88 & <0.001 \\
+W1 Text+Math & S3 figure & B1 latexmk & 4.02 & [4.01, 4.02] & [4.01, 4.02] & 1.76 & <0.001 \\
+W1 Text+Math & S4 preamble & B1 latexmk & 4.02 & [4.01, 4.02] & [4.01, 4.02] & 1.76 & <0.001 \\
+W2 CJK+Font & S0 clean & B1 latexmk & 9.02 & [9.01, 9.02] & [9.01, 9.02] & 0.78 & <0.001 \\
+W2 CJK+Font & S1 text & B1 latexmk & 4.02 & [4.01, 4.02] & [4.01, 4.02] & 1.76 & <0.001 \\
+W2 CJK+Font & S2 bib & B1 latexmk & 9.02 & [9.01, 9.02] & [9.01, 9.02] & 0.78 & <0.001 \\
+W2 CJK+Font & S3 figure & B1 latexmk & 4.01 & [4.01, 4.02] & [4.01, 4.02] & 1.76 & <0.001 \\
+W2 CJK+Font & S4 preamble & B1 latexmk & 4.02 & [4.01, 4.02] & [4.01, 4.02] & 1.76 & <0.001 \\
+W4 TikZ & S0 clean & B1 latexmk & 10.02 & [10.01, 10.02] & [10.01, 10.02] & 1.01 & <0.001 \\
+W4 TikZ & S1 text & B1 latexmk & 4.02 & [4.02, 4.02] & [4.02, 4.02] & 2.50 & <0.001 \\
+W4 TikZ & S2 bib & B1 latexmk & 10.02 & [10.01, 10.02] & [10.02, 10.02] & 1.01 & <0.001 \\
+W4 TikZ & S3 figure & B1 latexmk & 4.02 & [4.01, 4.02] & [4.02, 4.02] & 2.51 & <0.001 \\
+W4 TikZ & S4 preamble & B1 latexmk & 4.01 & [4.01, 4.02] & [4.01, 4.02] & 2.51 & <0.001 \\
+W5 Minted & S0 clean & B1 latexmk & 38.02 & [38.01, 38.02] & [38.01, 38.02] & 1.13 & <0.001 \\
+W5 Minted & S0 clean & B4 minted cache & 19.02 & [19.01, 19.02] & [19.01, 19.02] & 2.26 & <0.001 \\
+W5 Minted & S1 text & B1 latexmk & 14.02 & [14.01, 14.02] & [14.01, 14.02] & 3.07 & <0.001 \\
+W5 Minted & S1 text & B4 minted cache & 6.02 & [6.01, 6.02] & [6.01, 6.02] & 7.16 & <0.001 \\
+W5 Minted & S2 bib & B1 latexmk & 38.01 & [38.01, 38.02] & [38.01, 38.02] & 1.13 & <0.001 \\
+W5 Minted & S2 bib & B4 minted cache & 16.02 & [16.01, 16.02] & [16.01, 16.02] & 2.69 & <0.001 \\
+W5 Minted & S3 figure & B1 latexmk & 14.01 & [13.76, 14.01] & [14.01, 14.01] & 3.07 & <0.001 \\
+W5 Minted & S3 figure & B4 minted cache & 6.01 & [6.01, 6.02] & [6.01, 6.01] & 7.16 & <0.001 \\
+W5 Minted & S4 preamble & B1 latexmk & 14.01 & [14.01, 14.02] & [14.01, 14.02] & 3.07 & <0.001 \\
+W5 Minted & S4 preamble & B4 minted cache & 6.01 & [6.01, 6.02] & [6.01, 6.02] & 7.16 & <0.001 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

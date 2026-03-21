@@ -1,0 +1,6 @@
+config,label,dataset,visual_equal_rate,median_changed_pages,cases
+B0_baseline_xelatex,B0 baseline,formal_core,1.0,0.0,20
+B1_latexmk,B1 latexmk,formal_core,1.0,0.0,20
+B4_minted_cache,B4 minted cache,formal_core,1.0,0.0,5
+B3_latexmk_tikz_externalize,B3 externalize,triage,0.0,1.0,5
+B6_tectonic,B6 tectonic,triage,0.0,2.0,6

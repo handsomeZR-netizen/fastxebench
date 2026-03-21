@@ -1,0 +1,20 @@
+{
+  "id": "B1_latexmk",
+  "label": "latexmk with XeLaTeX",
+  "build_strategy": "latexmk_xelatex",
+  "requires": [
+    "latexmk"
+  ],
+  "main_matrix": true,
+  "development_only": false,
+  "strong_fidelity_expected": true,
+  "applicable_workloads": [
+    "W1_text_math",
+    "W2_cjk_font",
+    "W4_tikz",
+    "W5_minted",
+    "R1_fontspec_example",
+    "R2_pgfplots_example"
+  ],
+  "description": "Dependency-tracked baseline using latexmk."
+}

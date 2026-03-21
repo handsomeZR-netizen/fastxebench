@@ -1,0 +1,19 @@
+protocol_version,requested_storage_mode,workload,scenario,config,runs,success_rate,measure_median_ms,q1_ms,q3_ms,prime_median_ms,speedup_vs_baseline,binary_equal_rate,visual_equal_rate,median_changed_pages,storage_drive_letter,storage_file_system,defender_performance_mode_status,status_counts,mode_label
+v0.2-prime-measure,d_repo_ntfs,W1_text_math,S0_clean_build,B7_windows_storage_mode,5,1.0,10016.778,10013.962,10024.89,0.0,0.0,0.0,1.0,0.0,D,NTFS,0,"{""ok"": 5}",d_repo_ntfs
+v0.2-prime-measure,d_repo_ntfs,W1_text_math,S1_text_edit,B7_windows_storage_mode,5,1.0,4024.758,4021.847,4025.365,9025.388,0.0,0.0,1.0,0.0,D,NTFS,0,"{""ok"": 5}",d_repo_ntfs
+v0.2-prime-measure,d_repo_ntfs,W1_text_math,S3_figure_edit,B7_windows_storage_mode,5,1.0,4021.527,4018.434,4021.72,9022.873,0.0,0.0,1.0,0.0,D,NTFS,0,"{""ok"": 5}",d_repo_ntfs
+v0.2-prime-measure,d_repo_ntfs,W4_tikz,S0_clean_build,B7_windows_storage_mode,5,1.0,12009.134,11020.6,12011.01,0.0,0.0,0.0,1.0,0.0,D,NTFS,0,"{""ok"": 5}",d_repo_ntfs
+v0.2-prime-measure,d_repo_ntfs,W4_tikz,S1_text_edit,B7_windows_storage_mode,5,1.0,5015.925,5013.932,5027.648,12021.555,0.0,0.0,1.0,0.0,D,NTFS,0,"{""ok"": 5}",d_repo_ntfs
+v0.2-prime-measure,d_repo_ntfs,W4_tikz,S3_figure_edit,B7_windows_storage_mode,5,1.0,5025.668,5022.799,5030.128,12022.198,0.0,0.0,1.0,0.0,D,NTFS,0,"{""ok"": 5}",d_repo_ntfs
+v0.2-prime-measure,d_repo_ntfs,W5_minted,S0_clean_build,B7_windows_storage_mode,5,1.0,46030.705,46025.957,46035.358,0.0,0.0,0.0,1.0,0.0,D,NTFS,0,"{""ok"": 5}",d_repo_ntfs
+v0.2-prime-measure,d_repo_ntfs,W5_minted,S1_text_edit,B7_windows_storage_mode,5,1.0,16021.797,16017.631,17016.855,45022.925,0.0,0.0,1.0,0.0,D,NTFS,0,"{""ok"": 5}",d_repo_ntfs
+v0.2-prime-measure,d_repo_ntfs,W5_minted,S3_figure_edit,B7_windows_storage_mode,5,1.0,16025.469,16021.081,16031.241,46027.864,0.0,0.0,1.0,0.0,D,NTFS,0,"{""ok"": 5}",d_repo_ntfs
+v0.2-prime-measure,c_profile_ntfs,W1_text_math,S0_clean_build,B7_windows_storage_mode,5,1.0,11009.856,10050.294,11054.256,0.0,0.0,0.0,1.0,0.0,C,NTFS,0,"{""ok"": 5}",c_profile_ntfs
+v0.2-prime-measure,c_profile_ntfs,W1_text_math,S1_text_edit,B7_windows_storage_mode,5,1.0,5026.865,5023.838,5040.609,11022.432,0.0,0.0,1.0,0.0,C,NTFS,0,"{""ok"": 5}",c_profile_ntfs
+v0.2-prime-measure,c_profile_ntfs,W1_text_math,S3_figure_edit,B7_windows_storage_mode,5,1.0,5023.51,5021.628,5023.86,11013.616,0.0,0.0,1.0,0.0,C,NTFS,0,"{""ok"": 5}",c_profile_ntfs
+v0.2-prime-measure,c_profile_ntfs,W4_tikz,S0_clean_build,B7_windows_storage_mode,5,1.0,14020.452,13025.667,14022.566,0.0,0.0,0.0,1.0,0.0,C,NTFS,0,"{""ok"": 5}",c_profile_ntfs
+v0.2-prime-measure,c_profile_ntfs,W4_tikz,S1_text_edit,B7_windows_storage_mode,5,1.0,6017.05,6016.475,6018.853,14011.157,0.0,0.0,1.0,0.0,C,NTFS,0,"{""ok"": 5}",c_profile_ntfs
+v0.2-prime-measure,c_profile_ntfs,W4_tikz,S3_figure_edit,B7_windows_storage_mode,5,1.0,6011.45,5026.843,6016.377,13039.744,0.0,0.0,1.0,0.0,C,NTFS,0,"{""ok"": 5}",c_profile_ntfs
+v0.2-prime-measure,c_profile_ntfs,W5_minted,S0_clean_build,B7_windows_storage_mode,5,1.0,52043.31,52020.103,55018.974,0.0,0.0,0.0,1.0,0.0,C,NTFS,0,"{""ok"": 5}",c_profile_ntfs
+v0.2-prime-measure,c_profile_ntfs,W5_minted,S1_text_edit,B7_windows_storage_mode,5,1.0,19030.302,19013.486,20012.14,52016.07,0.0,0.0,1.0,0.0,C,NTFS,0,"{""ok"": 5}",c_profile_ntfs
+v0.2-prime-measure,c_profile_ntfs,W5_minted,S3_figure_edit,B7_windows_storage_mode,5,1.0,20019.758,19018.875,22020.844,59027.76,0.0,0.0,1.0,0.0,C,NTFS,0,"{""ok"": 5}",c_profile_ntfs

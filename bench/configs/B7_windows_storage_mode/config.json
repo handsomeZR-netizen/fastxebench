@@ -1,0 +1,18 @@
+{
+  "id": "B7_windows_storage_mode",
+  "label": "Windows storage mode study",
+  "build_strategy": "latexmk_xelatex",
+  "requires": [
+    "latexmk"
+  ],
+  "main_matrix": false,
+  "development_only": false,
+  "strong_fidelity_expected": true,
+  "applicable_workloads": [
+    "W1_text_math",
+    "W2_cjk_font",
+    "W4_tikz",
+    "W5_minted"
+  ],
+  "description": "Second-half experiment that reuses the latexmk path while recording storage and Defender metadata."
+}

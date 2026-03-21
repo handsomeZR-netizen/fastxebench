@@ -1,0 +1,12 @@
+config,workload,scenario,success,status,fidelity_status,fidelity_visual_equal,fidelity_binary_equal,changed_pages_count,visual_diff_pages,classification,reason,run_directory,summary_json
+B6_tectonic,W1_text_math,S0_clean_build,True,ok,ok,False,False,2,1;2,dev_only,visual_diff_under_tectonic,,
+B6_tectonic,W1_text_math,S1_text_edit,True,ok,ok,False,False,2,1;2,dev_only,visual_diff_under_tectonic,,
+B6_tectonic,W2_cjk_font,S0_clean_build,True,ok,ok,False,False,2,1;2,dev_only,visual_diff_under_tectonic,,
+B6_tectonic,W2_cjk_font,S1_text_edit,True,ok,ok,False,False,2,1;2,dev_only,visual_diff_under_tectonic,,
+B3_latexmk_tikz_externalize,W4_tikz,S0_clean_build,True,ok,ok,False,False,1,2,appendix_negative,visual_diff_under_externalization,,
+B6_tectonic,W4_tikz,S0_clean_build,True,ok,ok,False,False,3,1;2;3,dev_only,visual_diff_under_tectonic,,
+B3_latexmk_tikz_externalize,W4_tikz,S1_text_edit,True,ok,ok,False,False,1,2,appendix_negative,visual_diff_under_externalization,,
+B6_tectonic,W4_tikz,S1_text_edit,True,ok,ok,False,False,3,1;2;3,dev_only,visual_diff_under_tectonic,,
+B3_latexmk_tikz_externalize,W4_tikz,S2_bib_edit,True,ok,ok,False,False,1,2,appendix_negative,visual_diff_under_externalization,,
+B3_latexmk_tikz_externalize,W4_tikz,S3_figure_edit,True,ok,ok,False,False,2,2;3,appendix_negative,visual_diff_under_externalization,,
+B3_latexmk_tikz_externalize,W4_tikz,S4_preamble_edit,True,ok,ok,False,False,1,2,appendix_negative,visual_diff_under_externalization,,

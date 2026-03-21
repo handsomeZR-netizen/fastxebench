@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+title: FastXeBench
+message: "If you use this repository, please cite the FastXeBench paper and link to the public artifact."
+type: software
+authors:
+  - family-names: Xu
+    given-names: Zirui
+    affiliation: Nanjing Normal University
+    email: 19230444@njnu.edu.cn
+repository-code: "https://github.com/handsomeZR-netizen/fastxebench"
+abstract: >-
+  FastXeBench is a reproducible benchmark and fidelity study of edit-to-PDF
+  latency for XeLaTeX on Windows. It combines workload-aware benchmarking,
+  a prime-plus-measure protocol for incremental edits, and explicit PDF
+  fidelity checks.
+keywords:
+  - xelatex
+  - benchmark
+  - reproducibility
+  - windows
+  - latexmk
+  - performance
+license: NOASSERTION

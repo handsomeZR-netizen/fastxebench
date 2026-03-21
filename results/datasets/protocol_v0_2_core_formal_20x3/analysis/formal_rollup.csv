@@ -1,0 +1,6 @@
+workload,config,clean_ms,clean_speedup,bib_ms,bib_speedup,incremental_ms,incremental_speedup,visual_equal_rate
+W1_text_math,B1_latexmk,8015.753,0.8811,8016.323,0.8822,4016.699,1.7596,1.0
+W2_cjk_font,B1_latexmk,9015.913,0.7843,9015.11,0.784,4015.636,1.7602,1.0
+W4_tikz,B1_latexmk,10015.934,1.0061,10017.449,1.0052,4017.575,2.5059,1.0
+W5_minted,B1_latexmk,38016.504,1.1328,38014.567,1.1329,14014.223,3.0728,1.0
+W5_minted,B4_minted_cache,19016.497,2.2646,16018.985,2.6885,6014.192,7.1603,1.0

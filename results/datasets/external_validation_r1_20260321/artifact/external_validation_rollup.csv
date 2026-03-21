@@ -1,0 +1,3 @@
+workload,config,clean_ms,clean_speedup,bib_ms,bib_speedup,incremental_ms,incremental_speedup,visual_equal_rate
+R1_fontspec_example,B1_latexmk,9017.902,0.7835,9011.804,0.7822,4017.816,1.756,1.0
+R2_pgfplots_example,B1_latexmk,9008.908,0.785,9013.828,0.7843,4020.642,1.759,1.0

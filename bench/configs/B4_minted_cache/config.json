@@ -1,0 +1,16 @@
+{
+  "id": "B4_minted_cache",
+  "label": "latexmk plus minted cache",
+  "build_strategy": "latexmk_minted_cache",
+  "requires": [
+    "latexmk",
+    "latexminted"
+  ],
+  "main_matrix": true,
+  "development_only": false,
+  "strong_fidelity_expected": true,
+  "applicable_workloads": [
+    "W5_minted"
+  ],
+  "description": "Main-matrix config for minted-heavy workloads with cache explicitly enabled."
+}

@@ -1,0 +1,80 @@
+# OS / editor noise
+.DS_Store
+Thumbs.db
+Desktop.ini
+texput.log
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+
+# Internal planning notes not needed in the public repository
+任务.md
+完成情况与进展说明.md
+
+# Generated paper build artifacts
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.xdv
+paper/dist/
+
+# Benchmark build scratch
+bench/**/__pycache__/
+
+# Private or bulky benchmark outputs
+results/cache/
+results/raw/
+results/csv/
+results/plots/
+results/datasets/*
+results/datasets/*.log
+
+# Public dataset: formal core matrix
+!results/datasets/protocol_v0_2_core_formal_20x3/
+results/datasets/protocol_v0_2_core_formal_20x3/*
+!results/datasets/protocol_v0_2_core_formal_20x3/analysis/
+!results/datasets/protocol_v0_2_core_formal_20x3/analysis/*.csv
+!results/datasets/protocol_v0_2_core_formal_20x3/csv/
+!results/datasets/protocol_v0_2_core_formal_20x3/csv/*.csv
+!results/datasets/protocol_v0_2_core_formal_20x3/artifact/
+results/datasets/protocol_v0_2_core_formal_20x3/artifact/*
+!results/datasets/protocol_v0_2_core_formal_20x3/artifact/env.json
+!results/datasets/protocol_v0_2_core_formal_20x3/artifact/protocol.json
+!results/datasets/protocol_v0_2_core_formal_20x3/artifact/versions.txt
+
+# Public dataset: external validation
+!results/datasets/external_validation_r1_20260321/
+results/datasets/external_validation_r1_20260321/*
+!results/datasets/external_validation_r1_20260321/csv/
+!results/datasets/external_validation_r1_20260321/csv/*.csv
+!results/datasets/external_validation_r1_20260321/artifact/
+results/datasets/external_validation_r1_20260321/artifact/*
+!results/datasets/external_validation_r1_20260321/artifact/env.json
+!results/datasets/external_validation_r1_20260321/artifact/external_validation_rollup.csv
+!results/datasets/external_validation_r1_20260321/artifact/external_validation_summary.md
+!results/datasets/external_validation_r1_20260321/artifact/protocol.json
+!results/datasets/external_validation_r1_20260321/artifact/versions.txt
+
+# Public dataset: Windows storage follow-up
+!results/datasets/b7_storage_study_r2_20260321/
+results/datasets/b7_storage_study_r2_20260321/*
+!results/datasets/b7_storage_study_r2_20260321/artifact/
+results/datasets/b7_storage_study_r2_20260321/artifact/*
+!results/datasets/b7_storage_study_r2_20260321/artifact/b7_combined_per_run.csv
+!results/datasets/b7_storage_study_r2_20260321/artifact/b7_combined_summary.csv
+!results/datasets/b7_storage_study_r2_20260321/artifact/b7_rollup.csv
+!results/datasets/b7_storage_study_r2_20260321/artifact/b7_summary.md
+
+# Public dataset: fidelity triage summary
+!results/datasets/fidelity_triage_b3_b6_20260321/
+results/datasets/fidelity_triage_b3_b6_20260321/*
+!results/datasets/fidelity_triage_b3_b6_20260321/artifact/
+results/datasets/fidelity_triage_b3_b6_20260321/artifact/*
+!results/datasets/fidelity_triage_b3_b6_20260321/artifact/protocol.json
+!results/datasets/fidelity_triage_b3_b6_20260321/artifact/triage-summary.csv
+!results/datasets/fidelity_triage_b3_b6_20260321/artifact/triage-summary.json

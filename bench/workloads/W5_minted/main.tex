@@ -1,0 +1,82 @@
+\documentclass[11pt]{article}
+
+\newif\ifBenchTikzExternalize
+\BenchTikzExternalizefalse
+\newif\ifBenchMintedCache
+\BenchMintedCachefalse
+\InputIfFileExists{bench-config.tex}{}{}
+
+\newcommand{\benchtexttoken}{ALPHA}
+\newcommand{\benchfiguretoken}{4.00}
+\newcommand{\benchpreambletoken}{P0}
+
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\ifBenchMintedCache
+  \usepackage[cache=true,cachedir=_minted]{minted}
+\else
+  \usepackage[cache=false]{minted}
+\fi
+
+\title{W5 Minted Workload}
+\author{FastXeBench}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Purpose}
+This workload stresses code highlighting and cache reuse. The text token is \benchtexttoken, and the citation path stays active via \cite{refalpha}.
+
+\section{Code Blocks}
+\begin{minted}[fontsize=\small,linenos]{python}
+def score(values):
+    total = sum(values)
+    return total / max(len(values), 1)
+\end{minted}
+
+\begin{minted}[fontsize=\small]{json}
+{
+  "protocol": "v0.2-prime-measure",
+  "cache": "candidate",
+  "token": "ALPHA"
+}
+\end{minted}
+
+\begin{minted}[fontsize=\small]{bash}
+latexmk -pdfxe main.tex
+python bench/scripts/summarize.py --input-root results/raw
+\end{minted}
+
+\section{Reference Output}
+Equation~\eqref{eq:minted-loss} keeps the auxiliary file path active, while Figure~\ref{fig:minted-bar} gives the figure-edit scenario a concrete target.
+\begin{equation}
+\label{eq:minted-loss}
+L(x) = \sum_{i=1}^{n} \left(x_i - \bar{x}\right)^2 .
+\end{equation}
+
+\begin{figure}[h]
+\centering
+\rule{\benchfiguretoken cm}{0.6pt}
+\caption{A tiny figure surrogate whose width changes under the figure-edit scenario.}
+\label{fig:minted-bar}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lr@{}}
+\toprule
+Artifact & Count \\
+\midrule
+Code blocks & 3 \\
+Highlighted lines & 11 \\
+\bottomrule
+\end{tabular}
+\caption{A small table to keep the workload structurally similar to the others.}
+\end{table}
+
+\bibliographystyle{plain}
+\bibliography{refs}
+
+\end{document}
