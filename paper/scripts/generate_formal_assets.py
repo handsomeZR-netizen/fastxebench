@@ -77,6 +77,35 @@ WORKLOAD_BOTTLENECKS = {
     "W5_minted": "Pygments highlighting, minted cache reuse, and auxiliary reruns.",
 }
 
+EXTERNAL_VALIDATION_ORDER = ["R1_fontspec_example", "R2_pgfplots_example"]
+EXTERNAL_VALIDATION_ROLES = {
+    "R1_fontspec_example": "Native-font article example outside the synthetic core matrix.",
+    "R2_pgfplots_example": "Plot-heavy figure example outside the synthetic core matrix.",
+}
+
+PRACTICAL_GUIDANCE_ROWS = [
+    {
+        "case": "Ordinary incremental writing",
+        "recommendation": r"\texttt{B1 latexmk}",
+        "notes": "Best default for steady S1/S3/S4 loops on W1, W2, and W4.",
+    },
+    {
+        "case": "Code-heavy minted documents",
+        "recommendation": r"\texttt{B4 minted cache}",
+        "notes": "Strongest safe path in the current matrix: about 7.16x and roughly 37 seconds saved on incremental edits.",
+    },
+    {
+        "case": "Clean-build or bib-sensitive loops",
+        "recommendation": r"\texttt{Measure B0 and B1 locally}",
+        "notes": r"\texttt{latexmk} is not guaranteed to win on S0 or S2.",
+    },
+    {
+        "case": "Fidelity-risk acceleration paths",
+        "recommendation": r"\texttt{Do not enable by default}",
+        "notes": r"\texttt{B3} and \texttt{B6} remain diagnostic paths rather than default recommendations.",
+    },
+]
+
 SCENARIO_DEFINITIONS = [
     {
         "scenario": "S0_clean_build",
@@ -308,6 +337,30 @@ def build_baseline_rollup(summary: pd.DataFrame) -> pd.DataFrame:
                 "incremental_ms": float(incremental["measure_median_ms"].median()),
             }
         )
+    return pd.DataFrame(rows)
+
+
+def build_external_validation_anatomy(external_root: Path) -> pd.DataFrame:
+    rows: list[dict] = []
+    for workload in EXTERNAL_VALIDATION_ORDER:
+        main_tex = WORKLOAD_SOURCE_ROOT / workload / "main.tex"
+        refs_bib = WORKLOAD_SOURCE_ROOT / workload / "refs.bib"
+        text = main_tex.read_text(encoding="utf-8-sig")
+        pdf_path = external_root / "raw" / "_references" / workload / "S0_clean_build" / "source" / "main.pdf"
+
+        rows.append(
+            {
+                "workload": workload,
+                "pages": parse_pdf_page_count(pdf_path),
+                "main_tex_lines": len(text.splitlines()),
+                "bib_entries": count_bibliography_entries(refs_bib),
+                "uses_fontspec": "\\usepackage{fontspec}" in text,
+                "bibliography_active": "\\cite{" in text,
+                "uses_pgfplots": "\\usepackage{pgfplots}" in text or "\\begin{loglogaxis}" in text,
+                "why_validation": EXTERNAL_VALIDATION_ROLES[workload],
+            }
+        )
+
     return pd.DataFrame(rows)
 
 
@@ -602,9 +655,17 @@ def build_rollup(summary: pd.DataFrame) -> pd.DataFrame:
 
     for workload, config in targets:
         subset = summary[(summary["workload"] == workload) & (summary["config"] == config)].copy()
+        baseline_subset = summary[
+            (summary["workload"] == workload) & (summary["config"] == "B0_baseline_xelatex")
+        ].copy()
         inc = subset[subset["scenario"].isin(["S1_text_edit", "S3_figure_edit", "S4_preamble_edit"])]
+        baseline_inc = baseline_subset[
+            baseline_subset["scenario"].isin(["S1_text_edit", "S3_figure_edit", "S4_preamble_edit"])
+        ]
         clean = subset[subset["scenario"] == "S0_clean_build"].iloc[0]
         bib = subset[subset["scenario"] == "S2_bib_edit"].iloc[0]
+        incremental_ms = float(inc["measure_median_ms"].median())
+        baseline_incremental_ms = float(baseline_inc["measure_median_ms"].median())
         rows.append(
             {
                 "workload": workload,
@@ -613,7 +674,8 @@ def build_rollup(summary: pd.DataFrame) -> pd.DataFrame:
                 "clean_speedup": round(float(clean["speedup_vs_baseline"]), 4),
                 "bib_ms": round(float(bib["measure_median_ms"]), 3),
                 "bib_speedup": round(float(bib["speedup_vs_baseline"]), 4),
-                "incremental_ms": round(float(inc["measure_median_ms"].median()), 3),
+                "incremental_ms": round(incremental_ms, 3),
+                "incremental_saved_ms": round(baseline_incremental_ms - incremental_ms, 3),
                 "incremental_speedup": round(float(inc["speedup_vs_baseline"].median()), 4),
                 "visual_equal_rate": round(float(subset["visual_equal_rate"].min()), 4),
             }
@@ -626,18 +688,18 @@ def write_rollup_table(rollup: pd.DataFrame, output_path: Path) -> None:
     lines = [
         r"\begin{table}[t]",
         r"\centering",
-        r"\caption{Formal core rollup for non-baseline configurations. Incremental latency is the median over S1, S3, and S4.}",
+        r"\caption{Formal core rollup for non-baseline configurations. Incremental latency is the median over S1, S3, and S4, and saved seconds are measured against the same-workload XeLaTeX baseline.}",
         r"\label{tab:formal-rollup}",
         r"\resizebox{\linewidth}{!}{%",
-        r"\begin{tabular}{llrrrrrr}",
+        r"\begin{tabular}{llrrrrrrr}",
         r"\toprule",
-        r"Workload & Config & Clean (s) & Clean $\times$ & Bib (s) & Bib $\times$ & Incremental (s) & Incremental $\times$ \\",
+        r"Workload & Config & Clean (s) & Clean $\times$ & Bib (s) & Bib $\times$ & Incremental (s) & Incremental $\times$ & Inc. saved (s) \\",
         r"\midrule",
     ]
 
     for _, row in rollup.iterrows():
         lines.append(
-            "{} & {} & {:.2f} & {:.2f} & {:.2f} & {:.2f} & {:.2f} & {:.2f} \\\\".format(
+            "{} & {} & {:.2f} & {:.2f} & {:.2f} & {:.2f} & {:.2f} & {:.2f} & {:.2f} \\\\".format(
                 WORKLOAD_LABELS[row["workload"]],
                 CONFIG_LABELS[row["config"]],
                 row["clean_ms"] / 1000.0,
@@ -646,6 +708,7 @@ def write_rollup_table(rollup: pd.DataFrame, output_path: Path) -> None:
                 row["bib_speedup"],
                 row["incremental_ms"] / 1000.0,
                 row["incremental_speedup"],
+                row["incremental_saved_ms"] / 1000.0,
             )
         )
 
@@ -848,6 +911,75 @@ def write_external_validation_table(external_rollup: pd.DataFrame, output_path: 
     output_path.write_text("\n".join(lines), encoding="utf-8")
 
 
+def write_external_validation_anatomy_table(external_anatomy: pd.DataFrame, output_path: Path) -> None:
+    ordered = external_anatomy.copy()
+    ordered["workload"] = pd.Categorical(ordered["workload"], EXTERNAL_VALIDATION_ORDER, ordered=True)
+    ordered = ordered.sort_values("workload").reset_index(drop=True)
+
+    lines = [
+        r"\begin{table}[t]",
+        r"\centering",
+        r"\caption{Anatomy of the two real-project-derived external-validation workloads.}",
+        r"\label{tab:external-anatomy}",
+        r"\small",
+        r"\resizebox{\linewidth}{!}{%",
+        r"\begin{tabular}{lrrrrccp{0.33\linewidth}}",
+        r"\toprule",
+        r"Workload & Pages & Lines & Bib & \texttt{fontspec} & Bib-active & PGFPlots & Why this workload matters \\",
+        r"\midrule",
+    ]
+    for _, row in ordered.iterrows():
+        lines.append(
+            "{} & {} & {} & {} & {} & {} & {} & {} \\\\".format(
+                WORKLOAD_LABELS[row["workload"]],
+                "--" if pd.isna(row["pages"]) else int(row["pages"]),
+                int(row["main_tex_lines"]),
+                int(row["bib_entries"]),
+                "yes" if row["uses_fontspec"] else "no",
+                "yes" if row["bibliography_active"] else "no",
+                "yes" if row["uses_pgfplots"] else "no",
+                latex_escape(row["why_validation"]),
+            )
+        )
+    lines += [
+        r"\bottomrule",
+        r"\end{tabular}",
+        r"}",
+        r"\end{table}",
+        "",
+    ]
+    output_path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def write_practical_guidance_table(output_path: Path) -> None:
+    lines = [
+        r"\begin{table}[t]",
+        r"\centering",
+        r"\caption{Practical guidance distilled from the present artifact.}",
+        r"\label{tab:practical-guidance}",
+        r"\small",
+        r"\begin{tabular}{p{0.30\linewidth}p{0.22\linewidth}p{0.38\linewidth}}",
+        r"\toprule",
+        r"Case & Recommendation & Notes \\",
+        r"\midrule",
+    ]
+    for row in PRACTICAL_GUIDANCE_ROWS:
+        lines.append(
+            "{} & {} & {} \\\\".format(
+                latex_escape(row["case"]),
+                row["recommendation"],
+                row["notes"],
+            )
+        )
+    lines += [
+        r"\bottomrule",
+        r"\end{tabular}",
+        r"\end{table}",
+        "",
+    ]
+    output_path.write_text("\n".join(lines), encoding="utf-8")
+
+
 def write_b7_table(b7_rollup: pd.DataFrame, output_path: Path) -> None:
     rows: list[dict] = []
     for mode_label in ["d_repo_ntfs", "c_profile_ntfs"]:
@@ -956,10 +1088,10 @@ def plot_speedup_heatmap(summary: pd.DataFrame, output_base: Path) -> None:
     )
     labels = heatmap.apply(lambda column: column.map(lambda value: "" if pd.isna(value) else f"{value:.2f}x"))
 
-    cmap = LinearSegmentedColormap.from_list("fx_speedup", ["#A14A3B", "#EFE8DB", "#2E6F7E"])
+    cmap = LinearSegmentedColormap.from_list("fx_speedup", ["#8B9098", "#F6F3ED", "#1F1F1F"])
     norm = TwoSlopeNorm(vmin=float(np.nanmin(heatmap.values)), vcenter=1.0, vmax=float(np.nanmax(heatmap.values)))
 
-    fig, ax = plt.subplots(figsize=(6.8, 3.6))
+    fig, ax = plt.subplots(figsize=(7.2, 3.9))
     sns.heatmap(
         heatmap,
         ax=ax,
@@ -969,8 +1101,15 @@ def plot_speedup_heatmap(summary: pd.DataFrame, output_base: Path) -> None:
         norm=norm,
         linewidths=0.6,
         linecolor="#F2ECDD",
+        annot_kws={"fontsize": 7.4},
         cbar_kws={"label": "Speedup vs baseline"},
     )
+    flat_values = heatmap.to_numpy().flatten()
+    for text_obj, value in zip(ax.texts, flat_values):
+        if pd.isna(value):
+            continue
+        text_obj.set_color("white" if (value >= 1.35 or value <= 0.9) else "#222222")
+        text_obj.set_fontweight("semibold")
     ax.set_xlabel("Scenario")
     ax.set_ylabel("")
     ax.set_xticklabels([SCENARIO_LABELS[item] for item in SCENARIO_ORDER], rotation=0)
@@ -1145,6 +1284,7 @@ def write_analysis_outputs(
     rollup: pd.DataFrame,
     baseline_rollup: pd.DataFrame,
     workload_anatomy: pd.DataFrame,
+    external_anatomy: pd.DataFrame,
     summary: pd.DataFrame,
     triage: pd.DataFrame,
     inferential_stats: pd.DataFrame,
@@ -1154,6 +1294,7 @@ def write_analysis_outputs(
     rollup.to_csv(analysis_root / "formal_rollup.csv", index=False)
     baseline_rollup.to_csv(analysis_root / "formal_baseline_rollup.csv", index=False)
     workload_anatomy.to_csv(analysis_root / "formal_workload_anatomy.csv", index=False)
+    external_anatomy.to_csv(analysis_root / "external_validation_anatomy.csv", index=False)
     pd.DataFrame(SCENARIO_DEFINITIONS).to_csv(analysis_root / "formal_scenario_definitions.csv", index=False)
     inferential_stats.to_csv(analysis_root / "formal_inferential_stats.csv", index=False)
 
@@ -1209,14 +1350,27 @@ def main() -> int:
     rollup = build_rollup(summary)
     baseline_rollup = build_baseline_rollup(summary)
     workload_anatomy = build_workload_anatomy(dataset_root)
+    external_anatomy = build_external_validation_anatomy(external_root)
 
-    write_analysis_outputs(dataset_root, group_stats, rollup, baseline_rollup, workload_anatomy, summary, triage, inferential_stats)
+    write_analysis_outputs(
+        dataset_root,
+        group_stats,
+        rollup,
+        baseline_rollup,
+        workload_anatomy,
+        external_anatomy,
+        summary,
+        triage,
+        inferential_stats,
+    )
     write_rollup_table(rollup, tables_root / "formal_core_rollup.tex")
     write_baseline_rollup_table(baseline_rollup, tables_root / "formal_baseline_rollup.tex")
     write_workload_anatomy_table(workload_anatomy, tables_root / "formal_workload_anatomy.tex")
     write_scenario_definitions_table(tables_root / "formal_scenario_definitions.tex")
     write_setup_table(env_payload, tables_root / "formal_setup.tex")
+    write_practical_guidance_table(tables_root / "practical_guidance.tex")
     write_external_validation_table(external_rollup, tables_root / "external_validation_rollup.tex")
+    write_external_validation_anatomy_table(external_anatomy, tables_root / "external_validation_anatomy.tex")
     write_b7_table(b7_rollup, tables_root / "b7_storage_rollup.tex")
     write_stats_appendix_table(inferential_stats, tables_root / "appendix_formal_stats.tex")
 
@@ -1232,6 +1386,7 @@ def main() -> int:
                 "rollup": str(dataset_root / "analysis" / "formal_rollup.csv"),
                 "baseline_rollup": str(dataset_root / "analysis" / "formal_baseline_rollup.csv"),
                 "workload_anatomy": str(dataset_root / "analysis" / "formal_workload_anatomy.csv"),
+                "external_anatomy": str(dataset_root / "analysis" / "external_validation_anatomy.csv"),
                 "figures": [
                     str(figures_root / "formal_speedup_heatmap.pdf"),
                     str(figures_root / "formal_latency_panels.pdf"),
@@ -1243,7 +1398,9 @@ def main() -> int:
                     str(tables_root / "formal_baseline_rollup.tex"),
                     str(tables_root / "formal_workload_anatomy.tex"),
                     str(tables_root / "formal_scenario_definitions.tex"),
+                    str(tables_root / "practical_guidance.tex"),
                     str(tables_root / "external_validation_rollup.tex"),
+                    str(tables_root / "external_validation_anatomy.tex"),
                     str(tables_root / "b7_storage_rollup.tex"),
                     str(tables_root / "appendix_formal_stats.tex"),
                 ],

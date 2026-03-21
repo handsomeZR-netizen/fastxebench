@@ -50,8 +50,8 @@ $manifest = @(
     "Output root: $outputRoot",
     "",
     "Required follow-up before submission:",
-    "- Replace REPO_URL_PLACEHOLDER with the final public repository URL.",
     "- Review the generated PDF and compare it with the repository-local paper PDF.",
+    "- Keep main.bbl in the upload bundle together with main.tex and refs.bib.",
     "- Check the arXiv processed PDF after upload."
 )
 Set-Content -LiteralPath (Join-Path $outputRoot "bundle_manifest.txt") -Value $manifest -Encoding utf8

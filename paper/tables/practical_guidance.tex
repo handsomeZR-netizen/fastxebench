@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\caption{Practical guidance distilled from the present artifact.}
+\label{tab:practical-guidance}
+\small
+\begin{tabular}{p{0.30\linewidth}p{0.22\linewidth}p{0.38\linewidth}}
+\toprule
+Case & Recommendation & Notes \\
+\midrule
+Ordinary incremental writing & \texttt{B1 latexmk} & Best default for steady S1/S3/S4 loops on W1, W2, and W4. \\
+Code-heavy minted documents & \texttt{B4 minted cache} & Strongest safe path in the current matrix: about 7.16x and roughly 37 seconds saved on incremental edits. \\
+Clean-build or bib-sensitive loops & \texttt{Measure B0 and B1 locally} & \texttt{latexmk} is not guaranteed to win on S0 or S2. \\
+Fidelity-risk acceleration paths & \texttt{Do not enable by default} & \texttt{B3} and \texttt{B6} remain diagnostic paths rather than default recommendations. \\
+\bottomrule
+\end{tabular}
+\end{table}

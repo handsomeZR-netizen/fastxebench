@@ -8,6 +8,9 @@
   - `Zirui Xu`
   - `Nanjing Normal University`
   - `19230444@njnu.edu.cn`
+- Suggested arXiv categories for this manuscript:
+  - primary: `cs.PF`
+  - cross-list: `cs.SE`
 - Submit the paper as an English-first manuscript. If a multilingual version is added later, keep the English version first.
 
 ## Source Bundle
@@ -20,6 +23,7 @@
 
 - Verify the generated bundle directory contains:
   - `main.tex`
+  - `main.bbl`
   - `refs.bib`
   - `figures/*.pdf`
   - `tables/*.tex`

@@ -1,0 +1,3 @@
+workload,pages,main_tex_lines,bib_entries,uses_fontspec,bibliography_active,uses_pgfplots,why_validation
+R1_fontspec_example,2,79,2,True,True,False,Native-font article example outside the synthetic core matrix.
+R2_pgfplots_example,2,96,2,False,True,True,Plot-heavy figure example outside the synthetic core matrix.
