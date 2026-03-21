@@ -4,6 +4,7 @@
 [![Paper PDF](https://img.shields.io/badge/Paper-PDF-B31B1B?style=for-the-badge)](paper/main.pdf)
 [![Protocol](https://img.shields.io/badge/Protocol-v0.2--prime--measure-0F766E?style=for-the-badge)](#reproducing-the-paper-assets)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2011-0078D4?style=for-the-badge)](#reproducing-the-paper-assets)
+[![License: MIT](https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge)](LICENSE)
 
 FastXeBench is a benchmark artifact and companion paper about **edit-to-PDF latency** in **Windows-local XeLaTeX workflows**. The project is built around a simple observation: a lot of TeX performance advice is based on clean builds, personal impressions, or tool-specific folklore, while the thing authors actually wait on is the repeated edit-build-inspect loop.
 
