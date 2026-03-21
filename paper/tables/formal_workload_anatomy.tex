@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\caption{Workload anatomy for the four main-matrix workloads.}
+\label{tab:workload-anatomy}
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrcccp{0.28\linewidth}}
+\toprule
+Workload & Pages & Lines & Bib & TikZ & CJK & Native-font & Minted & Expected bottleneck \\
+\midrule
+W1 Text+Math & 2 & 70 & 2 & 1 & no & no & no & Auxiliary reruns plus one lightweight TikZ figure. \\
+W2 CJK+Font & 2 & 69 & 2 & 1 & yes & yes & no & Windows-local CJK and native-font typesetting path. \\
+W4 TikZ & 3 & 76 & 2 & 3 & no & no & no & TikZ/pgfplots rendering and figure-page regeneration. \\
+W5 Minted & 2 & 82 & 2 & 0 & no & no & yes & Pygments highlighting, minted cache reuse, and auxiliary reruns. \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

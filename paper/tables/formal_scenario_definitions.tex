@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\caption{Operational scenario definitions used by protocol \texttt{v0.2-prime-measure}.}
+\label{tab:scenario-definitions}
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{p{0.13\linewidth}p{0.08\linewidth}p{0.30\linewidth}p{0.17\linewidth}p{0.24\linewidth}}
+\toprule
+Scenario & Prime? & Mutation & Edit size & Expected rebuild scope \\
+\midrule
+S0 clean & No & No source mutation; direct clean build. & N/A & Whole document from scratch. \\
+S1 text & Yes & \texttt{\textbackslash benchtexttoken}: \texttt{ALPHA} $\rightarrow$ \texttt{BETA} & Single body-token replacement & Body text update with possible local page reflow; no bibliography or preamble invalidation. \\
+S2 bib & Yes & \texttt{\textbackslash cite\{refalpha\}} $\rightarrow$ \texttt{\textbackslash cite\{refalpha,refbeta\}} & Single cite expansion & Triggers \texttt{.aux}/\texttt{.bbl} updates and a bibliography rerun. \\
+S3 figure & Yes & \texttt{\textbackslash benchfiguretoken}: \texttt{1.00} $\rightarrow$ \texttt{1.25} & Single numeric figure parameter & Forces figure/TikZ regeneration without changing bibliography or preamble state. \\
+S4 preamble & Yes & \texttt{\textbackslash benchpreambletoken}: \texttt{P0} $\rightarrow$ \texttt{P1} & Single preamble-token replacement & Invalidates the preamble and forces the document back through the XeLaTeX path. \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

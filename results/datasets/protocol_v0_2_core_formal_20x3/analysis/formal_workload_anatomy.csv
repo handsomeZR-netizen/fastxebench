@@ -1,0 +1,5 @@
+workload,pages,main_tex_lines,bib_entries,tikz_figures,minted_blocks,has_cjk,uses_native_font_path,uses_minted,expected_bottleneck
+W1_text_math,2,70,2,1,0,False,False,False,Auxiliary reruns plus one lightweight TikZ figure.
+W2_cjk_font,2,69,2,1,0,True,True,False,Windows-local CJK and native-font typesetting path.
+W4_tikz,3,76,2,3,0,False,False,False,TikZ/pgfplots rendering and figure-page regeneration.
+W5_minted,2,82,2,0,3,False,False,True,"Pygments highlighting, minted cache reuse, and auxiliary reruns."

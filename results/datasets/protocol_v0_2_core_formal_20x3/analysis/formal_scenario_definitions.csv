@@ -1,0 +1,6 @@
+scenario,prime_required,mutation,edit_size,scope
+S0_clean_build,No,No source mutation; direct clean build.,N/A,Whole document from scratch.
+S1_text_edit,Yes,\texttt{\textbackslash benchtexttoken}: \texttt{ALPHA} $\rightarrow$ \texttt{BETA},Single body-token replacement,Body text update with possible local page reflow; no bibliography or preamble invalidation.
+S2_bib_edit,Yes,"\texttt{\textbackslash cite\{refalpha\}} $\rightarrow$ \texttt{\textbackslash cite\{refalpha,refbeta\}}",Single cite expansion,Triggers \texttt{.aux}/\texttt{.bbl} updates and a bibliography rerun.
+S3_figure_edit,Yes,\texttt{\textbackslash benchfiguretoken}: \texttt{1.00} $\rightarrow$ \texttt{1.25},Single numeric figure parameter,Forces figure/TikZ regeneration without changing bibliography or preamble state.
+S4_preamble_edit,Yes,\texttt{\textbackslash benchpreambletoken}: \texttt{P0} $\rightarrow$ \texttt{P1},Single preamble-token replacement,Invalidates the preamble and forces the document back through the XeLaTeX path.

@@ -67,6 +67,54 @@ PALETTE = {
     "B6_tectonic": "#A14A3B",
 }
 
+REPO_ROOT = Path(__file__).resolve().parents[2]
+WORKLOAD_SOURCE_ROOT = REPO_ROOT / "bench" / "workloads"
+
+WORKLOAD_BOTTLENECKS = {
+    "W1_text_math": "Auxiliary reruns plus one lightweight TikZ figure.",
+    "W2_cjk_font": "Windows-local CJK and native-font typesetting path.",
+    "W4_tikz": "TikZ/pgfplots rendering and figure-page regeneration.",
+    "W5_minted": "Pygments highlighting, minted cache reuse, and auxiliary reruns.",
+}
+
+SCENARIO_DEFINITIONS = [
+    {
+        "scenario": "S0_clean_build",
+        "prime_required": "No",
+        "mutation": "No source mutation; direct clean build.",
+        "edit_size": "N/A",
+        "scope": "Whole document from scratch.",
+    },
+    {
+        "scenario": "S1_text_edit",
+        "prime_required": "Yes",
+        "mutation": r"\texttt{\textbackslash benchtexttoken}: \texttt{ALPHA} $\rightarrow$ \texttt{BETA}",
+        "edit_size": "Single body-token replacement",
+        "scope": "Body text update with possible local page reflow; no bibliography or preamble invalidation.",
+    },
+    {
+        "scenario": "S2_bib_edit",
+        "prime_required": "Yes",
+        "mutation": r"\texttt{\textbackslash cite\{refalpha\}} $\rightarrow$ \texttt{\textbackslash cite\{refalpha,refbeta\}}",
+        "edit_size": "Single cite expansion",
+        "scope": r"Triggers \texttt{.aux}/\texttt{.bbl} updates and a bibliography rerun.",
+    },
+    {
+        "scenario": "S3_figure_edit",
+        "prime_required": "Yes",
+        "mutation": r"\texttt{\textbackslash benchfiguretoken}: \texttt{1.00} $\rightarrow$ \texttt{1.25}",
+        "edit_size": "Single numeric figure parameter",
+        "scope": "Forces figure/TikZ regeneration without changing bibliography or preamble state.",
+    },
+    {
+        "scenario": "S4_preamble_edit",
+        "prime_required": "Yes",
+        "mutation": r"\texttt{\textbackslash benchpreambletoken}: \texttt{P0} $\rightarrow$ \texttt{P1}",
+        "edit_size": "Single preamble-token replacement",
+        "scope": "Invalidates the preamble and forces the document back through the XeLaTeX path.",
+    },
+]
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -189,6 +237,78 @@ def normalize_power_plan(power_plan: str | None) -> str:
     if "(平衡)" in power_plan or "(Balanced)" in power_plan:
         return "Balanced"
     return power_plan
+
+
+def parse_pdf_page_count(pdf_path: Path) -> int | None:
+    if not pdf_path.exists():
+        return None
+    try:
+        completed = subprocess.run(
+            ["pdfinfo", str(pdf_path)],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+        )
+    except Exception:
+        return None
+
+    text = (completed.stdout or "") + "\n" + (completed.stderr or "")
+    match = re.search(r"^Pages:\s+(\d+)\s*$", text, re.MULTILINE)
+    return int(match.group(1)) if match else None
+
+
+def count_bibliography_entries(path: Path) -> int:
+    text = path.read_text(encoding="utf-8-sig")
+    return len(re.findall(r"^\s*@", text, re.MULTILINE))
+
+
+def build_workload_anatomy(dataset_root: Path) -> pd.DataFrame:
+    rows: list[dict] = []
+    for workload in WORKLOAD_ORDER:
+        main_tex = WORKLOAD_SOURCE_ROOT / workload / "main.tex"
+        refs_bib = WORKLOAD_SOURCE_ROOT / workload / "refs.bib"
+        text = main_tex.read_text(encoding="utf-8-sig")
+        pdf_path = dataset_root / "raw" / "_references" / workload / "S0_clean_build" / "source" / "main.pdf"
+
+        rows.append(
+            {
+                "workload": workload,
+                "pages": parse_pdf_page_count(pdf_path),
+                "main_tex_lines": len(main_tex.read_text(encoding="utf-8-sig").splitlines()),
+                "bib_entries": count_bibliography_entries(refs_bib),
+                "tikz_figures": len(re.findall(r"\\begin\{tikzpicture\}", text)),
+                "minted_blocks": len(re.findall(r"\\begin\{minted\}", text)),
+                "has_cjk": bool(re.search(r"[\u4e00-\u9fff]", text)) or "\\documentclass[UTF8]{ctexart}" in text,
+                "uses_native_font_path": "\\documentclass[UTF8]{ctexart}" in text or "\\usepackage{fontspec}" in text,
+                "uses_minted": "\\usepackage" in text and "minted" in text,
+                "expected_bottleneck": WORKLOAD_BOTTLENECKS[workload],
+            }
+        )
+
+    return pd.DataFrame(rows)
+
+
+def build_baseline_rollup(summary: pd.DataFrame) -> pd.DataFrame:
+    rows: list[dict] = []
+    baseline = summary[summary["config"] == "B0_baseline_xelatex"].copy()
+    for workload in WORKLOAD_ORDER:
+        subset = baseline[baseline["workload"] == workload].copy()
+        if subset.empty:
+            continue
+        incremental = subset[subset["scenario"].isin(["S1_text_edit", "S3_figure_edit", "S4_preamble_edit"])]
+        clean = subset[subset["scenario"] == "S0_clean_build"].iloc[0]
+        bib = subset[subset["scenario"] == "S2_bib_edit"].iloc[0]
+        rows.append(
+            {
+                "workload": workload,
+                "clean_ms": float(clean["measure_median_ms"]),
+                "bib_ms": float(bib["measure_median_ms"]),
+                "incremental_ms": float(incremental["measure_median_ms"].median()),
+            }
+        )
+    return pd.DataFrame(rows)
 
 
 def extract_command_version(env_payload: dict, command_name: str) -> str:
@@ -591,6 +711,113 @@ def write_setup_table(env_payload: dict, output_path: Path) -> None:
     output_path.write_text("\n".join(lines), encoding="utf-8")
 
 
+def write_workload_anatomy_table(workload_anatomy: pd.DataFrame, output_path: Path) -> None:
+    ordered = workload_anatomy.copy()
+    ordered["workload"] = pd.Categorical(ordered["workload"], WORKLOAD_ORDER, ordered=True)
+    ordered = ordered.sort_values("workload").reset_index(drop=True)
+
+    lines = [
+        r"\begin{table}[t]",
+        r"\centering",
+        r"\caption{Workload anatomy for the four main-matrix workloads.}",
+        r"\label{tab:workload-anatomy}",
+        r"\small",
+        r"\resizebox{\linewidth}{!}{%",
+        r"\begin{tabular}{lrrrrcccp{0.28\linewidth}}",
+        r"\toprule",
+        r"Workload & Pages & Lines & Bib & TikZ & CJK & Native-font & Minted & Expected bottleneck \\",
+        r"\midrule",
+    ]
+    for _, row in ordered.iterrows():
+        lines.append(
+            "{} & {} & {} & {} & {} & {} & {} & {} & {} \\\\".format(
+                WORKLOAD_LABELS[row["workload"]],
+                "--" if pd.isna(row["pages"]) else int(row["pages"]),
+                int(row["main_tex_lines"]),
+                int(row["bib_entries"]),
+                int(row["tikz_figures"]),
+                "yes" if row["has_cjk"] else "no",
+                "yes" if row["uses_native_font_path"] else "no",
+                "yes" if row["uses_minted"] else "no",
+                latex_escape(row["expected_bottleneck"]),
+            )
+        )
+    lines += [
+        r"\bottomrule",
+        r"\end{tabular}",
+        r"}",
+        r"\end{table}",
+        "",
+    ]
+    output_path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def write_scenario_definitions_table(output_path: Path) -> None:
+    lines = [
+        r"\begin{table}[t]",
+        r"\centering",
+        r"\caption{Operational scenario definitions used by protocol \texttt{v0.2-prime-measure}.}",
+        r"\label{tab:scenario-definitions}",
+        r"\small",
+        r"\resizebox{\linewidth}{!}{%",
+        r"\begin{tabular}{p{0.13\linewidth}p{0.08\linewidth}p{0.30\linewidth}p{0.17\linewidth}p{0.24\linewidth}}",
+        r"\toprule",
+        r"Scenario & Prime? & Mutation & Edit size & Expected rebuild scope \\",
+        r"\midrule",
+    ]
+    for row in SCENARIO_DEFINITIONS:
+        lines.append(
+            "{} & {} & {} & {} & {} \\\\".format(
+                latex_escape(SCENARIO_INLINE_LABELS[row["scenario"]]),
+                row["prime_required"],
+                row["mutation"],
+                latex_escape(row["edit_size"]),
+                row["scope"],
+            )
+        )
+    lines += [
+        r"\bottomrule",
+        r"\end{tabular}",
+        r"}",
+        r"\end{table}",
+        "",
+    ]
+    output_path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def write_baseline_rollup_table(baseline_rollup: pd.DataFrame, output_path: Path) -> None:
+    ordered = baseline_rollup.copy()
+    ordered["workload"] = pd.Categorical(ordered["workload"], WORKLOAD_ORDER, ordered=True)
+    ordered = ordered.sort_values("workload").reset_index(drop=True)
+
+    lines = [
+        r"\begin{table}[t]",
+        r"\centering",
+        r"\caption{Baseline latencies for \texttt{B0\_baseline\_xelatex}. Incremental latency is the median over S1, S3, and S4.}",
+        r"\label{tab:baseline-rollup}",
+        r"\begin{tabular}{lrrr}",
+        r"\toprule",
+        r"Workload & Clean (s) & Bib (s) & Incremental (s) \\",
+        r"\midrule",
+    ]
+    for _, row in ordered.iterrows():
+        lines.append(
+            "{} & {:.2f} & {:.2f} & {:.2f} \\\\".format(
+                WORKLOAD_LABELS[row["workload"]],
+                row["clean_ms"] / 1000.0,
+                row["bib_ms"] / 1000.0,
+                row["incremental_ms"] / 1000.0,
+            )
+        )
+    lines += [
+        r"\bottomrule",
+        r"\end{tabular}",
+        r"\end{table}",
+        "",
+    ]
+    output_path.write_text("\n".join(lines), encoding="utf-8")
+
+
 def write_external_validation_table(external_rollup: pd.DataFrame, output_path: Path) -> None:
     lines = [
         r"\begin{table}[t]",
@@ -916,6 +1143,8 @@ def write_analysis_outputs(
     dataset_root: Path,
     group_stats: pd.DataFrame,
     rollup: pd.DataFrame,
+    baseline_rollup: pd.DataFrame,
+    workload_anatomy: pd.DataFrame,
     summary: pd.DataFrame,
     triage: pd.DataFrame,
     inferential_stats: pd.DataFrame,
@@ -923,6 +1152,9 @@ def write_analysis_outputs(
     analysis_root = ensure_dir(dataset_root / "analysis")
     group_stats.to_csv(analysis_root / "formal_group_stats.csv", index=False)
     rollup.to_csv(analysis_root / "formal_rollup.csv", index=False)
+    baseline_rollup.to_csv(analysis_root / "formal_baseline_rollup.csv", index=False)
+    workload_anatomy.to_csv(analysis_root / "formal_workload_anatomy.csv", index=False)
+    pd.DataFrame(SCENARIO_DEFINITIONS).to_csv(analysis_root / "formal_scenario_definitions.csv", index=False)
     inferential_stats.to_csv(analysis_root / "formal_inferential_stats.csv", index=False)
 
     fidelity_rows = []
@@ -975,9 +1207,14 @@ def main() -> int:
     group_stats = build_group_stats(summary, per_run, iterations=args.bootstrap_iters, seed=args.seed)
     inferential_stats = build_inferential_stats(group_stats, per_run)
     rollup = build_rollup(summary)
+    baseline_rollup = build_baseline_rollup(summary)
+    workload_anatomy = build_workload_anatomy(dataset_root)
 
-    write_analysis_outputs(dataset_root, group_stats, rollup, summary, triage, inferential_stats)
+    write_analysis_outputs(dataset_root, group_stats, rollup, baseline_rollup, workload_anatomy, summary, triage, inferential_stats)
     write_rollup_table(rollup, tables_root / "formal_core_rollup.tex")
+    write_baseline_rollup_table(baseline_rollup, tables_root / "formal_baseline_rollup.tex")
+    write_workload_anatomy_table(workload_anatomy, tables_root / "formal_workload_anatomy.tex")
+    write_scenario_definitions_table(tables_root / "formal_scenario_definitions.tex")
     write_setup_table(env_payload, tables_root / "formal_setup.tex")
     write_external_validation_table(external_rollup, tables_root / "external_validation_rollup.tex")
     write_b7_table(b7_rollup, tables_root / "b7_storage_rollup.tex")
@@ -993,6 +1230,8 @@ def main() -> int:
                 "group_stats": str(dataset_root / "analysis" / "formal_group_stats.csv"),
                 "inferential_stats": str(dataset_root / "analysis" / "formal_inferential_stats.csv"),
                 "rollup": str(dataset_root / "analysis" / "formal_rollup.csv"),
+                "baseline_rollup": str(dataset_root / "analysis" / "formal_baseline_rollup.csv"),
+                "workload_anatomy": str(dataset_root / "analysis" / "formal_workload_anatomy.csv"),
                 "figures": [
                     str(figures_root / "formal_speedup_heatmap.pdf"),
                     str(figures_root / "formal_latency_panels.pdf"),
@@ -1001,6 +1240,9 @@ def main() -> int:
                 "tables": [
                     str(tables_root / "formal_setup.tex"),
                     str(tables_root / "formal_core_rollup.tex"),
+                    str(tables_root / "formal_baseline_rollup.tex"),
+                    str(tables_root / "formal_workload_anatomy.tex"),
+                    str(tables_root / "formal_scenario_definitions.tex"),
                     str(tables_root / "external_validation_rollup.tex"),
                     str(tables_root / "b7_storage_rollup.tex"),
                     str(tables_root / "appendix_formal_stats.tex"),
