@@ -138,8 +138,8 @@
 
 %
 % article meta data
-%% LLT 18 Aug 2016: no more!
-% \newcommand{\keywords}[1]{\def\@keywords{#1}}
+%% LLT 18 Aug 2016: re-enabled for arXiv preprint
+\newcommand{\keywords}[1]{\def\@keywords{#1}}
 %% LLT 18 Aug 2016: but need corresponding author
 \newcommand{\corrauthor}[3][]{%
   \def\thecorrauthor{%
@@ -187,13 +187,13 @@ THE ABSTRACT\vskip12pt}\let\go\relax\fi
 \sffamily\small\vskip1ex\if@peerjlineno\internallinenumbers\fi\theabstract
 }%
 }%
-%% LLT 18 Aug 2016: no more keywords
-% \vskip18pt%
-% \noindent
-% \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-% \if@peerjlineno\internallinenumbers\fi%
-% {\color{color1}\keywordname\hspace*{1em}} \@keywords%
-% }%
+%% LLT 18 Aug 2016: re-enabled keywords for arXiv preprint
+\vskip18pt%
+\noindent
+\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+\if@peerjlineno\internallinenumbers\fi%
+{\color{color1}\keywordname\hspace*{1em}} \@keywords%
+}%
 }%
 \vskip25pt%
 }%

@@ -1,6 +1,15 @@
 \section{AIMER Framework}
 \label{sec:method}
 
+The core of \method{} is a three-stage pipeline that takes short audio-visual clips and outputs an instrument label. An audio encoder and a motion-aware visual encoder first extract modality-specific tokens; a lightweight fusion gate then aligns them under local temporal offset; two prediction heads produce the instrument label together with an auxiliary phase signal used for regularization. Figure~\ref{fig:architecture} shows the overall layout.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\linewidth]{figures/01_architecture}
+\caption{Overview of the \method{} framework. The model consists of three stages: (1) modality-specific encoders that extract audio tokens and motion-aware visual tokens, (2) a latency-aware fusion module that aligns asynchronous cues via a shift-aggregation window and a learned fusion gate, and (3) prediction heads for the primary instrument label and an auxiliary phase regularizer.}
+\label{fig:architecture}
+\end{figure}
+
 \subsection{Design objectives}
 
 \method is designed around three practical constraints. First, the model should remain light enough for consumer-grade deployment, which rules out multimodal stacks that only become competitive at large scale. Second, the system should remain stable when visible gesture and audible evidence disagree temporarily. Third, the architecture should expose diagnostic hooks so that performance degradation can be attributed to offset, corruption, or missing modalities instead of being hidden inside a single aggregate score.

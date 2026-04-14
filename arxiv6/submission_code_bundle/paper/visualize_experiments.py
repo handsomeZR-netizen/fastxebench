@@ -424,7 +424,7 @@ def plot_fig3_diagnostics():
     ax_radar.set_xticklabels(radar_ticklabels, fontsize=13, fontweight="bold",
                              color="#000000")
     ax_radar.tick_params(pad=35, colors="#000000")
-    ax_radar.set_ylim(0, 1.0)
+    ax_radar.set_ylim(0, 1.10)
     ax_radar.set_yticks([0.25, 0.50, 0.75])
     ax_radar.set_yticklabels(["0.25", "0.50", "0.75"], fontsize=9, color="#000000")
     ax_radar.set_rlabel_position(205)
