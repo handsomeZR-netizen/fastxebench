@@ -1,0 +1,11 @@
+\section{Problem Formulation}
+\label{sec:problem}
+
+We consider short public performance clips in which audio and video are aligned at the clip level but may exhibit local temporal mismatch. The primary task is instrument classification from multimodal observations. A coarse performance-phase label is attached only as weak auxiliary supervision and as a diagnostic variable.
+\begin{align}
+\clip &= (\audio, \video), \qquad \inst \in \mathcal{Y}_{\mathrm{inst}}, \qquad \phase \in \mathcal{Y}_{\mathrm{phase}}, \\
+\audio &\in \R^{T_a \times F}, \qquad \video \in \R^{T_v \times H \times W \times C}, \\
+\hat{\inst} &= \argmax f_{\Theta}(\clip), \qquad \hat{\phase} = \argmax g_{\Theta}(\clip), \\
+\Loss &= \Loss_{\mathrm{inst}}(\hat{\inst}, \inst) + \lambda_p \Loss_{\mathrm{phase}}(\hat{\phase}, \phase).
+\end{align}
+Here, $\audio$ and $\video$ denote the audio and visual streams of a clip, $\inst$ is the primary instrument label, $\phase$ is a weak auxiliary phase target that may be annotated or heuristically derived, and $f_{\Theta}$ and $g_{\Theta}$ denote generic multimodal predictors for the two outputs. The evaluation in this paper reports instrument metrics as the main outcome; phase-aware analyses are used only to regularize training and to probe temporal structure in the learned representation. When phase supervision is unavailable, the formulation reduces to the primary instrument classification objective, while the explicit treatment of local audio-visual offset is deferred to the model design in Section~\ref{sec:method}.

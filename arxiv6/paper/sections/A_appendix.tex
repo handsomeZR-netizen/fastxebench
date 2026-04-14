@@ -1,0 +1,68 @@
+\section{Appendix: Additional Implementation Details}
+\label{sec:appendix}
+
+\subsection{Heuristic auxiliary phase labels}
+
+The auxiliary performance phase label is intended for regularization and diagnostics only. A clip is assigned to one of three coarse states:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Onset-dominant}: onset density is high and visible motion energy rises sharply.
+    \item \textbf{Sustain-dominant}: audio energy remains stable while onset density is low.
+    \item \textbf{Transition or pause}: low audio energy or inconsistent motion-audio evidence.
+\end{itemize}
+These labels are weak and should not be interpreted as expert-defined expressive categories.
+
+\subsection{Evaluation protocol details}
+
+Audio was segmented into overlapping windows under a shared clip policy across all compared models. The default analysis window was 2.0 s, and sensitivity sweeps covered 1.0, 1.5, 2.0, and 3.0 s. Log-mel features were extracted from 16 kHz audio. For video, a short frame sequence was sampled per clip under the same temporal budget, and motion descriptors were cached when available. All compared systems used the same clip extraction policy, shared instrument label map, and stress-test operators, including synthetic audio-visual shift, audio corruption, and hand-region occlusion.
+
+Unless otherwise noted, model selection was based on validation Macro-F1 and the reported non-latency metrics were computed once on the held-out test split. Latency was measured with batch size one after a short warm-up pass, under a single consumer-GPU budget, and excluded data loading, dataset decoding, and offline feature caching. These settings make the reported latency values useful as engineering reference points within this paper, but not as cross-laboratory hardware standards.
+
+\subsection{Hyperparameter sensitivity}
+
+\begin{table}[ht]
+\centering
+\caption{Observed sensitivity to clip length.}
+\label{tab:hyper_clip}
+\begin{tabular}{lccc}
+\toprule
+Clip length (s) & URMP Macro-F1 & Solos Macro-F1 & Latency (ms/clip) \\
+\midrule
+1.0 & 0.81 & 0.72 & 12 \\
+1.5 & 0.83 & 0.75 & 15 \\
+2.0 & \textbf{0.84} & \textbf{0.76} & 18 \\
+3.0 & 0.83 & 0.75 & 25 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Observed sensitivity to the fusion delay radius.}
+\label{tab:hyper_delay}
+\begin{tabular}{lccc}
+\toprule
+Delay radius (ms) & URMP Macro-F1 & Solos Macro-F1 & Latency (ms/clip) \\
+\midrule
+40 & 0.82 & 0.73 & 16 \\
+80 & \textbf{0.84} & \textbf{0.76} & 18 \\
+120 & 0.83 & 0.75 & 19 \\
+160 & 0.83 & 0.74 & 21 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Observed sensitivity to the motion-salience weight in the fusion gate.}
+\label{tab:hyper_motion}
+\begin{tabular}{lccc}
+\toprule
+$\lambda_m$ & URMP Macro-F1 & Solos Macro-F1 & Latency (ms/clip) \\
+\midrule
+0.1 & 0.82 & 0.74 & 18 \\
+0.3 & \textbf{0.84} & \textbf{0.76} & 18 \\
+0.5 & 0.83 & 0.75 & 18 \\
+0.7 & 0.82 & 0.73 & 18 \\
+\bottomrule
+\end{tabular}
+\end{table}

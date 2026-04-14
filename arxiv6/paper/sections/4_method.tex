@@ -1,0 +1,45 @@
+\section{AIMER Framework}
+\label{sec:method}
+
+\subsection{Design objectives}
+
+\method is designed around three practical constraints. First, the model should remain light enough for consumer-grade deployment, which rules out multimodal stacks that only become competitive at large scale. Second, the system should remain stable when visible gesture and audible evidence disagree temporarily. Third, the architecture should expose diagnostic hooks so that performance degradation can be attributed to offset, corruption, or missing modalities instead of being hidden inside a single aggregate score.
+
+To satisfy these goals, \method uses a compact audio encoder, a motion-aware visual encoder, and a lightweight fusion gate that operates on short temporal neighborhoods. The design emphasizes short clips, inexpensive temporal aggregation, and compatibility with datasets that provide either full RGB frames alone or RGB together with skeletons and landmarks.
+
+\subsection{Audio branch}
+
+The audio branch operates on log-mel patches computed from each clip. Rather than assuming a large music foundation model, the default implementation targets architectures in the cost range of CNN14 or AST-small \citep{Kong2020PANNs,Gong2021AST}. The audio encoder is responsible for capturing timbral identity, onset density, short-term rhythmic variation, and coarse energy envelope dynamics. These cues are sufficient for the primary task because instrument identity is strongly reflected in local spectral structure, and the auxiliary phase labels are meant to distinguish onset-dominant, sustain-dominant, and transition-heavy windows rather than fine-grained expressive nuance.
+
+The output of the audio branch is a short sequence of feature tokens together with a confidence estimate derived from prediction entropy. This confidence term is not interpreted as calibrated probability; it is instead used by the fusion gate as a relative indication of when the soundtrack provides clean evidence and when it might be unreliable because of overlap, silence, or editing artifacts.
+
+\subsection{Motion-aware visual branch}
+
+The visual branch is intentionally performance-centric. Public music videos often contain enough information to infer hand activity, bow or striking motion, and visible transitions between action and rest even when precise gesture labels are absent. Accordingly, the branch combines a lightweight RGB backbone with optional motion descriptors. When skeletons or hand landmarks are already available, as in Solos or PianoVAM, they are encoded as low-dimensional motion tokens. When they are not available, the branch falls back to inexpensive frame differencing or pose extraction during preprocessing.
+
+This design differs from a purely appearance-based video classifier in two ways. First, it treats visible motion as a structured cue rather than an incidental byproduct of RGB processing. Second, it allows the visual stream to degrade gracefully: if landmark extraction is noisy, the RGB backbone still provides context; if the camera view is visually ambiguous, the motion features can be down-weighted by the fusion gate. Lightweight backbones such as MobileNetV3, TSM, and MoViNet are natural comparison points for this branch \citep{Howard2019MobileNetV3,Lin2022TSM,Kondratyuk2021MoViNets}.
+
+\subsection{Latency-aware fusion}
+
+The core of \method is a fusion operator that explicitly tolerates local audio-visual offset. Let $\mathbf{u}_a = \{\mathbf{u}_a^t\}$ and $\mathbf{u}_v = \{\mathbf{u}_v^t\}$ denote short audio and visual token sequences. Instead of concatenating only same-index tokens, we compute a shift-aware neighborhood around each visual token and aggregate audio evidence from a delay window $[-\delay,\delay]$. The gate then combines three factors: audio confidence, motion salience, and local cross-modal agreement.
+\begin{align}
+\alpha_t(\delta) &= \mathrm{softmax}_{\delta \in [-\delay,\delay]} \bigl(\langle \mathbf{u}_v^t, \mathbf{u}_a^{t+\delta} \rangle \bigr), \\
+\tilde{\mathbf{u}}_a^t &= \sum_{\delta=-\delay}^{\delay} \alpha_t(\delta) \mathbf{u}_a^{t+\delta}, \\
+\mathbf{g}_t &= \sigma \bigl( W_g [\tilde{\mathbf{u}}_a^t \| \mathbf{u}_v^t \| s_t \| c_t] \bigr), \\
+\fused_t &= \mathbf{g}_t \odot \tilde{\mathbf{u}}_a^t + (1-\mathbf{g}_t) \odot \mathbf{u}_v^t,
+\end{align}
+where $s_t$ denotes motion salience and $c_t$ denotes audio confidence. This mechanism is deliberately smaller than the fusion modules used in larger multimodal reasoning models \citep{Mao2025DeepResonance,Chen2025MusiXQA}. Its purpose is not to maximize representational breadth, but to provide a controllable and interpretable compromise between evidence sources under low latency.
+
+\subsection{Prediction heads and training objective}
+
+The fused representation is pooled over the clip and fed into two heads. The primary head predicts the instrument label. The auxiliary head predicts a coarse performance phase. The phase target is intended as an inexpensive way to regularize temporal structure even when the dataset does not provide manually curated action-event annotations. In the evaluated setup, the phase label is heuristically derived from onset density, energy stability, and motion intensity, and is used only as auxiliary regularization and for diagnostic slicing rather than as a standalone benchmark target.
+
+The training objective is
+\begin{equation}
+\Loss = \Loss_{\mathrm{inst}} + \lambda_p \Loss_{\mathrm{phase}} + \lambda_c \Loss_{\mathrm{cons}},
+\end{equation}
+where $\Loss_{\mathrm{inst}}$ is the primary classification loss, $\Loss_{\mathrm{phase}}$ is the auxiliary phase loss, and $\Loss_{\mathrm{cons}}$ is a lightweight consistency penalty encouraging the fusion gate to avoid abrupt switching under small temporal perturbations. During inference, only the fused representation and the primary head are required for the main task. The phase head and diagnostic probes can be disabled if the deployment setting only demands instrument prediction.
+
+\subsection{Diagnostic probes}
+
+The framework is paired with three stress-test families. The first sweeps synthetic audio-visual offsets to measure how much performance drops when alignment is perturbed. The second corrupts either the audio or the visual input to expose modality over-reliance. The third applies crop or occlusion perturbations to test whether the model depends on narrow visual evidence such as hand visibility alone. These probes are part of the method design rather than a post hoc analysis because the paper's main claim is not only that multimodal fusion helps, but also that failure patterns matter for real-time instrument recognition on public performance videos.

@@ -1,0 +1,22 @@
+\section{Introduction}
+\label{sec:introduction}
+
+Public instrument performance videos provide a practical testbed for studying not only what is heard, but also how sound is produced. Compared with audio-only recordings, they expose timbre together with visible cues such as hand motion, bow direction, striking activity, and transitions between action and rest. Public resources such as URMP and Solos therefore support research on AI-assisted music education, rehearsal analysis, and performance monitoring without relying on closed or privacy-sensitive collections \citep{Li2019URMP,Montesinos2020Solos}. They also create a realistic setting in which clip-level instrument recognition must cope with weak synchronization, incomplete visual evidence, and coarse supervision.
+
+Existing work covers important pieces of this problem but rarely their intersection. Cross-modal music representation learning has improved retrieval, tagging, and correspondence modeling across audio, video, and language \citep{Simonetta2019Survey,Muller2019CrossModalSurvey,Oramas2018Genre,Zeng2018AVMusicRetrieval,Suris2022ArtisticCorrespondence,Manco2022CALLMusic}. Audio-visual music understanding systems extend this direction toward question answering and richer scene reasoning \citep{Li2022MusicAVQA,Diao2024MPQA,Mao2025DeepResonance,Chen2025MusiXQA}. Performance-centered datasets and motion-aware audio-visual analysis come closest to the present setting because they preserve visible playing behavior and relate gesture to sound production \citep{Li2019URMP,Montesinos2020Solos,Zhao2018SoundOfPixels,Gan2020MusicGesture}. However, lightweight clip-level instrument classification on public videos remains under-specified: many models are optimized for broad semantic reasoning rather than fast decisions on short clips, and existing evaluation protocols seldom report accuracy, latency, and failure under controlled perturbation within one setup.
+
+Three issues are especially restrictive in this setting:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Locally misaligned multimodal evidence.} Public performance videos may contain post-production offsets, mixed audio, or visually ambiguous windows in which motion and sound do not peak at the same instant.
+    \item \textbf{Missing diagnostic evaluation protocols.} Public datasets are reusable, but they rarely define a shared protocol that jointly measures classification quality, inference cost, and degradation under realistic corruption or crop perturbations.
+    \item \textbf{Coarse supervision beyond instrument identity.} Most public labels stop at the instrument level, while temporal structure is only weakly observed. Any additional phase-like target must therefore be used carefully and described as weak supervision rather than as a primary benchmark label.
+\end{itemize}
+
+To address these issues, we develop \method{} (Audio-visual Instrument Motion-Enhanced Recognizer), a lightweight multimodal framework for real-time instrument classification on public performance videos. The model combines compact audio cues, motion-aware visual evidence, and shift-tolerant fusion, while using a coarse phase label only for auxiliary supervision and diagnostics. The main contributions are:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Lightweight multimodal design for real-time instrument classification.} We introduce a compact audio-motion architecture with a motion-aware visual branch and a shift-tolerant fusion gate for short public performance clips.
+    \item \textbf{Phase-aware diagnostics rather than a second headline task.} We use heuristically derived phase labels as weak auxiliary supervision and as a diagnostic slicing variable, without treating them as a standalone benchmark claim.
+    \item \textbf{Unified evaluation on public performance videos.} We evaluate clean-set recognition, latency, offset sensitivity, and corruption robustness within one protocol on URMP and Solos.
+\end{itemize}
+
+The remainder of this paper is organized as follows. Section~\ref{sec:related_work} reviews multimodal music processing, audio-visual music understanding, and performance-centric datasets. Section~\ref{sec:problem} defines the task, Section~\ref{sec:method} presents \method{}, and Sections~\ref{sec:experiments}, \ref{sec:limitations}, and \ref{sec:conclusion} describe the evaluation protocol, discuss the current limitations, and summarize the paper.
