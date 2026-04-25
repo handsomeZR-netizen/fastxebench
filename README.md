@@ -1,4 +1,34 @@
-# FastXeBench
+# Fastxebench
+
+<!-- PORTFOLIO-SNAPSHOT:START -->
+<p align="left">
+  <img src="https://img.shields.io/badge/category-Research%20and%20academic%20tooling-blue" alt="Category" />
+  <img src="https://img.shields.io/badge/status-Public%20portfolio%20artifact-2ea44f" alt="Status" />
+</p>
+
+> Reproducible benchmark and fidelity study of edit-to-PDF latency for XeLaTeX on Windows, with paper artifacts and results.
+
+## Project Snapshot
+
+- Category: Research and academic tooling
+- Stack: Python, benchmark, latex, python, reproducible-research, windows
+- Status: Public portfolio artifact
+
+## What This Demonstrates
+
+- Presents the project with a clear purpose, technology stack, and review path.
+- Emphasizes reproducible research, academic writing, or measurable experiment artifacts.
+- Keeps implementation details and usage notes close to the code for easier reuse.
+
+## Quick Start
+
+```bash
+Start from README.md
+```
+
+<!-- PORTFOLIO-SNAPSHOT:END -->
+
+## Original Documentation
 
 [![Repository](https://img.shields.io/badge/GitHub-handsomeZR--netizen%2Ffastxebench-181717?logo=github&style=for-the-badge)](https://github.com/handsomeZR-netizen/fastxebench)
 [![Paper PDF](https://img.shields.io/badge/Paper-PDF-B31B1B?style=for-the-badge)](paper/main.pdf)
